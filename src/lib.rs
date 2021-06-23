@@ -86,6 +86,8 @@ impl Jwt {
         for i in config.del_payload.iter() {
             self.del_payload(&i);
         }
+        proxy_wasm::hostcalls::log(LogLevel::Critical, format!("jwt: {:#?}",self).as_str())
+                .ok();
 
         for i in config.payload_to_header.iter() {
             let (key,value) = (i.clone(),self.payload.get(i).unwrap().clone());
@@ -134,20 +136,21 @@ impl HttpContext for UpstreamCall {
             let (h, p) = (split_jwt[0].as_str(), split_jwt[1].as_str());
             let mut jwt = Jwt::new();
             
-            proxy_wasm::hostcalls::log(LogLevel::Critical, format!("h: {},p:{}",h,p).as_str())
-                .ok();
-
+            //proxy_wasm::hostcalls::log(LogLevel::Critical, format!("h: {},p:{}",h,p).as_str())
+            //    .ok();
+            
+            //TODO: handle different types passed to json(modify config?)
             let b64_headers=base64::decode(h).unwrap();
             let b64_payload=base64::decode(p).unwrap();
             
-            proxy_wasm::hostcalls::log(LogLevel::Critical, format!("h64: {:?},p64:{:?}",b64_headers,b64_payload).as_str())
-                .ok();
+            //proxy_wasm::hostcalls::log(LogLevel::Critical, format!("h64: {:?},p64:{:?}",b64_headers,b64_payload).as_str())
+            //    .ok();
             
             jwt.headers = serde_json::from_slice(&b64_headers).unwrap();
             jwt.payload = serde_json::from_slice(&b64_payload).unwrap();
 
-            proxy_wasm::hostcalls::log(LogLevel::Critical, format!("Jwt: {:?}",jwt).as_str())
-                .ok();
+            //proxy_wasm::hostcalls::log(LogLevel::Critical, format!("Jwt: {:?}",jwt).as_str())
+            //    .ok();
 
             jwt.modify_jwt(&self.config_jwt);
 
