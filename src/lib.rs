@@ -103,6 +103,7 @@ impl Jwt {
 #[derive(Debug)]
 struct UpstreamCall {
     config_jwt: ConfigJwt,
+    final_jwt: String,
 }
 
 impl UpstreamCall {
@@ -110,6 +111,7 @@ impl UpstreamCall {
     fn new(jwt: &ConfigJwt) -> Self {
         Self {
             config_jwt: jwt.clone(),
+            final_jwt: String::new(),
         }
     }
 }
@@ -167,7 +169,7 @@ impl HttpContext for UpstreamCall {
             
             headers.append(&mut vec![("jwt_test", new_jwt.as_str())]);
             self.send_http_response(200, headers, Some(b"OK\n"));
-            return Action::Continue;
+            return Action::Pause;
         }
 
         self.send_http_response(401, CORS_HEADERS.to_vec(), Some(b"Unauthorized\n"));
@@ -199,7 +201,7 @@ impl<'a> RootContext for UpstreamCallRoot {
             let json_str = String::from_utf8(config_b64).unwrap();
             // Creating HashMap of pattern ("path name", "rule type") and saving into UpstreamCallRoot object
             self.config_jwt=serde_json::from_str(&json_str).unwrap();
-            proxy_wasm::hostcalls::log(LogLevel::Warn, format!("config: {:?}", self.config_jwt).as_str())
+            proxy_wasm::hostcalls::log(LogLevel::Critical, format!("config: {:?}", self.config_jwt).as_str())
                  .ok();
         }
         true
