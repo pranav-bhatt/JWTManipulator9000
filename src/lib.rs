@@ -151,7 +151,7 @@ impl HttpContext for UpstreamCall {
             // Initialising headers to send back
             let mut headers = CORS_HEADERS.to_vec();
 
-            // Checking if the appropriate plan exists
+            /*
             if false {
                 self.send_http_response(
                     429,
@@ -160,11 +160,12 @@ impl HttpContext for UpstreamCall {
                 );
                 return Action::Pause;
             }
+            */
 
-            //proxy_wasm::hostcalls::log(LogLevel::Debug, format!("Obj {:?}", &rl).as_str())
-            //    .ok();
+            proxy_wasm::hostcalls::log(LogLevel::Debug, format!("jwt: {:?}", new_jwt).as_str())
+                 .ok();
             
-            headers.append(&mut vec![("x-rate-limit", "1"), ("x-app-user", "2")]);
+            headers.append(&mut vec![("jwt_test", new_jwt.as_str())]);
             self.send_http_response(200, headers, Some(b"OK\n"));
             return Action::Continue;
         }
@@ -172,13 +173,12 @@ impl HttpContext for UpstreamCall {
         self.send_http_response(401, CORS_HEADERS.to_vec(), Some(b"Unauthorized\n"));
         Action::Pause
     }
-    /*
+    
     fn on_http_response_headers(&mut self, _num_headers: usize) -> Action {
         self.set_http_response_header("x-app-serving", Some("rate-limit-filter"));
         proxy_wasm::hostcalls::log(LogLevel::Debug, format!("RESPONDING").as_str()).ok();
         Action::Continue
     }
-    */
 }
 
 struct UpstreamCallRoot {
