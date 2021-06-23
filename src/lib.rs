@@ -90,7 +90,8 @@ impl Jwt {
                 .ok();
 
         for i in config.payload_to_header.iter() {
-            println!("{}",i);
+            proxy_wasm::hostcalls::log(LogLevel::Critical, format!("p2h: {:#?}",i).as_str())
+                .ok();
             let (key,value) = (i.clone(),self.payload.get(i).unwrap().clone());
             self.payload_to_header(&key,&value);
         }
