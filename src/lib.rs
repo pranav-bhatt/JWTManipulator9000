@@ -155,8 +155,13 @@ impl HttpContext for UpstreamCall {
 
             jwt.modify_jwt(&self.config_jwt);
 
-            let b64_header = base64::encode(serde_json::to_string(&jwt.headers).unwrap());
-            let b64_payload = base64::encode(serde_json::to_string(&jwt.payload).unwrap());
+            let mut b64_header = base64::encode(serde_json::to_string(&jwt.headers).unwrap());
+            let mut b64_payload = base64::encode(serde_json::to_string(&jwt.payload).unwrap());
+
+            b64_header.pop();
+            b64_header.pop();
+            b64_payload.pop();
+            b64_payload.pop();
 
             split_jwt[0] = b64_header; 
             split_jwt[1] = b64_payload;
