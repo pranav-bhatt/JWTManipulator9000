@@ -131,7 +131,7 @@ impl HttpContext for UpstreamCall {
         if let Some(jwt) = self.get_http_request_header("Authorization") {
             // Decoding JWT token
             let mut split_jwt: Vec<String> = jwt.splitn(3,".").map(|s| s.to_string()).collect();
-            let (h, p) = (&split_jwt[0], &split_jwt[1]);
+            let (h, p) = (split_jwt[0].clone(), split_jwt[1].clone());
             let mut jwt = Jwt::new();
             jwt.headers = serde_json::from_slice(&base64::decode(h).unwrap()).unwrap();
             jwt.payload = serde_json::from_slice(&base64::decode(p).unwrap()).unwrap();
