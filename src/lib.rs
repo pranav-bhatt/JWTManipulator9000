@@ -90,6 +90,7 @@ impl Jwt {
                 .ok();
 
         for i in config.payload_to_header.iter() {
+            println!("{}",i);
             let (key,value) = (i.clone(),self.payload.get(i).unwrap().clone());
             self.payload_to_header(&key,&value);
         }
