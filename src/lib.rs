@@ -199,7 +199,7 @@ impl<'a> RootContext for UpstreamCallRoot {
             let json_str = String::from_utf8(config_b64).unwrap();
             // Creating HashMap of pattern ("path name", "rule type") and saving into UpstreamCallRoot object
             self.config_jwt=serde_json::from_str(&json_str).unwrap();
-            proxy_wasm::hostcalls::log(LogLevel::Info, format!("config: {:?}", self.config_jwt).as_str())
+            proxy_wasm::hostcalls::log(LogLevel::Warn, format!("config: {:?}", self.config_jwt).as_str())
                  .ok();
         }
         true
