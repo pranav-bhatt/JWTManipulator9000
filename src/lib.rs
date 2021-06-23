@@ -186,7 +186,7 @@ impl HttpContext for UpstreamCall {
         }
 
         self.send_http_response(401, CORS_HEADERS.to_vec(), Some(b"Unauthorized\n"));
-        Action::Pause
+        Action::Continue
     }
     
     fn on_http_response_headers(&mut self, _num_headers: usize) -> Action {
@@ -214,7 +214,7 @@ impl<'a> RootContext for UpstreamCallRoot {
             let json_str = String::from_utf8(config_b64).unwrap();
             // Creating HashMap of pattern ("path name", "rule type") and saving into UpstreamCallRoot object
             self.config_jwt=serde_json::from_str(&json_str).unwrap();
-            proxy_wasm::hostcalls::log(LogLevel::Critical, format!("config: {:?}", self.config_jwt).as_str())
+            proxy_wasm::hostcalls::log(LogLevel::Critical, format!("config: {:#?}", self.config_jwt).as_str())
                  .ok();
         }
         true
